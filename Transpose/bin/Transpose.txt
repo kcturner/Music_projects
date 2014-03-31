@@ -1,0 +1,335 @@
+import java.util.*;
+import java.text.*;
+
+public class Transpose
+{
+   // -------  main --------------
+   public static void main(String[] args)
+   {
+   Fundamental diatonic = new Fundamental();
+   
+//   System.out.println(diatonic.toString());
+   System.out.println("build sharp " + diatonic.decodeMajSharps("E") + "\n\n");
+   
+   System.out.print(diatonic.displayAllKeys());
+/*      
+   String[] key = new String[12];
+   for(int k = 0;k < 12; k++)
+   {
+      key[k] = Fundamental.chromatic[k];
+   System.out.println(key[k]);
+   }
+   */
+   
+   }
+}
+
+class Fundamental
+{
+   //Class constants
+   private final static int MAX_SIZE = 12;
+   String key, tension, transpoKey;
+   int k, i, keyNum;
+   boolean errorFlag;
+   //determines which array to build the scale from
+   boolean sharp = false, flat = false, dblSharp = false;
+   
+   public Fundamental()
+   {
+      key = "C";
+      tension = "";
+      transpoKey = "C";
+   }
+   
+   //triads
+   public Fundamental(String key)
+   {
+      this.key = key;
+      this.tension = "";
+      this.transpoKey = "C";
+   }
+
+   public Fundamental(String key, String transpoKey)
+   {
+      setKey(key);
+      setTranspoKey(transpoKey);
+   }
+   
+   public Fundamental(String key, String tension, String transpoKey)
+   {
+      setKey(key);
+      setTranspoKey(transpoKey);
+      setTension(tension);
+   }
+   
+   //for C and keys using sharps (through B)
+   public static String[] chromaticS = {"C", "C#", "D", "D#", "E", "F",
+      "F#", "G", "G#", "A", "A#", "B","C", "C#", "D", "D#", "E", "F",
+      "F#", "G", "G#", "A", "A#", "B"};
+   
+   //Key of B special case for including E#
+   public static String[] fSharp = {"F#", "G#", "A#", "B","C#", "D#", "E#"};
+   
+   //for keys using flats
+   public static String[] chromaticF = {"C", "Db", "D", "Eb", "E", "F",
+      "Gb", "G", "Ab", "A", "Bb", "B","C", "Db", "D", "Eb", "E", "F",
+      "Gb", "G", "Ab", "A", "Bb", "B"};
+   
+   //for atonal music, requires the class to be extended (future feature)
+   public static String[] chromatic = {"C", "C#", "Db", "D", "D#", "Eb", "E", 
+      "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", "B","C", "C#", "Db", 
+      "D", "D#", "Eb", "E", "F", "F#", "Gb", "G", "G#", "Ab", "A", "A#", "Bb", 
+      "B"};
+   
+   public static String[] chordType = {"", "min", "dim", "aug", "Maj7", "min7",
+      "dim7", "aug7", "7", "9", "sus", "7#9", "min7b5"};
+   
+   public boolean setKey(String key)//*****************************************
+   {
+      String upVal;            // for upcasing string
+
+      // convert to uppercase
+      upVal = key.toUpperCase();
+      
+      if ( !isValidKey(key))
+      {
+         errorFlag = true;
+         return false;
+      }
+      // else implied
+      errorFlag = false;
+      this.key = upVal;
+      return true;
+   }
+   
+   public boolean setTranspoKey(String transpoKey)//****************************
+   {
+      String upVal; 
+      // convert to uppercase
+      upVal = key.toUpperCase();
+      
+      if ( !isValidKey(transpoKey))
+      {
+         errorFlag = true;
+         return false;
+      }
+      // else implied
+      errorFlag = false;
+      this.key = upVal;
+      return true;
+   }
+   
+   public boolean setTension(String tension)//*********************************
+   {
+      this.tension = tension;
+      return true;
+   }
+   
+   // helpers
+   private boolean isValidKey(String keyVal)//*********************************
+   {
+      String upVal;
+
+      // convert to uppercase
+      upVal = key.toUpperCase();
+
+      // check for validity
+      if (
+            upVal == "C" || upVal == "G" || upVal == "D" || upVal == "A"
+            || upVal == "E" || upVal == "B")
+      {
+         sharp = true;
+         return true;
+      }
+      if (
+            upVal == "F" || upVal == "Bb" || upVal == "Eb" || upVal == "Ab"
+            || upVal == "Db" || upVal == "Gb")
+      {
+         flat = true;
+         return true;
+      }
+      if(upVal == "F#")
+      {
+         dblSharp = true;
+         return true;
+      }
+      else
+         return false;
+   }
+   
+   private boolean isValidTension(String tension)//****************************
+   {
+      return true;
+   }
+   
+   // accessors
+   public String getKey(){ return key; }
+   
+   public String getTranspoKey(){ return transpoKey; }
+
+   public String getTension(){ return tension; }
+
+   public boolean getErrorFlag()
+   {
+      return errorFlag;
+   }
+/*   
+   public boolean equals(Fundamental keyComp)
+   {
+      if (this.key != Fundamental.key)
+         return false;
+      if (this.transpoKey != Fundamental.transpoKey)
+         return false;
+      if (this.errorFlag != Fundamental.errorFlag)
+         return false;
+      return true;
+*/   
+   private int tonicToInt(String key)
+   {
+      setKey(key);
+     if(key == "C")
+        return 0;
+     if(key == "C#")
+        return 1;
+     if(key == "Db")
+        return 1;
+     if(key == "D")
+        return 2;
+     if(key == "D#")
+        return 3;
+     if(key == "Eb")
+        return 3;
+     if(key == "E")
+        return 4;
+     if(key == "F")
+        return 5;
+     if(key == "F#")
+        return 6;
+     if(key == "Gb")
+        return 6;
+     if(key == "G")
+        return 7;
+     if(key == "G#")
+        return 8;
+     if(key == "Ab")
+        return 8;
+     if(key == "A")
+        return 9;
+     if(key == "A#")
+        return 10;
+     if(key == "Bb")
+        return 10;
+     if(key == "B")
+        return 11;
+     return 0;
+   }
+   
+   //Gets key as a String from client (overloaded)
+   public String decodeMajSharps(String key)
+   {
+      int temp = tonicToInt(key);
+      String majKey = "";
+      for(k = 0; k < MAX_SIZE; k++, temp++)
+      {
+         if(k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 
+               || k == 11)
+            majKey+= chromaticS[temp] + " ";
+      }
+      return majKey;
+   }
+   
+   //Gets key as an int for looping (overloaded)
+   public String decodeMajSharps(int tonic)
+   {
+      String majKey = "";
+      for(k = 0; k < MAX_SIZE; k++, tonic++)
+      {
+         if(k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 
+               || k == 11)
+            majKey+= chromaticS[tonic] + " ";
+      }
+      return majKey;
+   }
+   
+   //Gets key as a String from client (overloaded)
+   public String decodeMajFlats(String key)
+   {
+      int temp = tonicToInt(key);
+      String majKey = "";
+      for(k = 0; k < MAX_SIZE; k++, temp++)
+      {
+         if(k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 
+               || k == 11)
+            majKey+= chromaticF[temp] + " ";
+      }
+      return majKey;
+   }
+   
+   //Gets key as an int for looping (overloaded)
+   public String decodeMajFlats(int tonic)
+   {
+      String majKey = "";
+      for(k = 0; k < MAX_SIZE; k++, tonic++)
+      {
+         if(k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 
+               || k == 11)
+            majKey+= chromaticF[tonic] + " ";
+      }
+      return majKey;
+   }
+   
+   public String decodeMajFsharp(String key)
+   {
+      String majKey = "";
+      for(k = 0; k < 7; k++)
+         majKey += fSharp[k] + " ";
+      return majKey;
+   }
+   
+   public String displayAllKeys()
+   {
+       int nextKey = 0, maxKeys = 6;
+       String allKeys = "";
+
+       //to string sharp keys (except F#)
+       for(int j = 0; j < maxKeys; nextKey = (nextKey + 7 < 12 ? nextKey
+               + 7: nextKey + 7 - 12), i = nextKey, j++)
+           allKeys += decodeMajSharps(i) + "\n\n";
+
+       allKeys += decodeMajFsharp(key) + "\n\n";
+
+       //reset counter
+       nextKey = 1;
+       maxKeys = 5;
+       //to string flat keys
+       for(int j = 0, i = 1; j < maxKeys; nextKey = (nextKey + 7 < 12 ? nextKey
+               + 7: nextKey + 7 - 12), i = nextKey, j++)
+           allKeys += decodeMajFlats(i) + "\n\n";
+       return allKeys;
+   }
+
+   public String toString()
+   {
+      String list = "";
+      int k, i = tonicToInt(key);
+
+      //major scale
+      if(sharp)
+      {
+         for(k = 0; k < MAX_SIZE; k++, i++)
+            if(k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 
+            || k == 11)
+               list += chromaticS[i] + " ";
+      }
+      if(flat)
+         for(k = 0; k < MAX_SIZE; k++, i++)
+            if(k == 0 || k == 2 || k == 4 || k == 5 || k == 7 || k == 9 
+            || k == 11)
+               list += chromaticF[i] + " ";
+      //      System.out.println(key[k]);
+            else
+               list = "Invalid Key";
+      return list;
+   }
+  
+}
