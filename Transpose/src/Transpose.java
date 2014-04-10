@@ -146,14 +146,14 @@ class Fundamental
       return errorFlag;
    }
 
-   private void reset()
+   protected void reset()
    {
       sharp = false;
       flat = false;
       dblSharp = false;
    }
 
-   private int tonicToInt(String key)
+   protected int tonicToInt(String key)
    {
       setKey(key);
       if(key.equals("C"))
@@ -192,7 +192,7 @@ class Fundamental
          return 11;
       return 0;
    }
-
+/*
    //Gets key as an int for looping
    public String decodeDiatonicSharps(int tonic)
    {
@@ -388,4 +388,5 @@ class Fundamental
       }
       return allKeys;
    }
+   */
 }
